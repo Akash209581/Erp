@@ -1,39 +1,39 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { FinanceStudent } from './finance-student.entity';
+import { FinanceStudent } from './finance-student.entity.js';
 
 @Entity('finance')
 export class Finance {
     @PrimaryGeneratedColumn()
-    id: number;
+    id;
 
-    @Column({ nullable: true })
-    registerno: string;
+    @Column({ type: 'varchar', nullable: true })
+    registerno;
 
-    @Column({ nullable: true })
-    vuid: string;
+    @Column({ type: 'varchar', nullable: true })
+    vuid;
 
-    @Column()
-    sem: string;
+    @Column({ type: 'varchar' })
+    sem;
 
-    @Column()
-    year: string;
-
-    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    feepaid: number;
+    @Column({ type: 'varchar' })
+    year;
 
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    feeleft: number;
+    feepaid;
 
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    totalfee: number;
+    feeleft;
 
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    admissionfee: number;
+    totalfee;
 
-    @Column({ nullable: true })
-    studentId: number;
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    admissionfee;
+
+    @Column({ type: 'int', nullable: true })
+    studentId;
 
     @ManyToOne(() => FinanceStudent)
     @JoinColumn({ name: 'studentId' })
-    student: FinanceStudent;
+    student;
 }

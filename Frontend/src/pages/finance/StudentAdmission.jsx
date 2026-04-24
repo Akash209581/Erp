@@ -156,7 +156,7 @@ const StudentAdmission = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/students/finance', {
+      const response = await fetch('http://localhost:3000/finance/students', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',

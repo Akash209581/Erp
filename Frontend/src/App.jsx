@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
-import StudentAdmission from './pages/StudentAdmission';
-import FinanceDashboard from './pages/FinanceDashboard';
+import StudentAdmission from './pages/finance/StudentAdmission';
+import FinanceDashboard from './pages/finance/FinanceDashboard';
 import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 
@@ -49,9 +49,20 @@ const App = () => {
                 ? <StudentDashboard user={user} /> 
                 : <Dashboard user={user} />
             } />
+            
+            {/* Finance Module */}
             <Route path="/student-admission" element={<StudentAdmission user={user} />} />
             <Route path="/finance-dashboard" element={<FinanceDashboard user={user} />} />
-            {/* Added dynamic routes for other modules */}
+            
+            {/* Library Module */}
+            <Route path="/library" element={<div className="p-12"><h1 className="text-3xl font-black text-slate-900">Library Module</h1><p className="text-slate-500 mt-4">Coming soon...</p></div>} />
+            
+            {/* Hostel Module */}
+            <Route path="/hostel" element={<div className="p-12"><h1 className="text-3xl font-black text-slate-900">Hostel Module</h1><p className="text-slate-500 mt-4">Coming soon...</p></div>} />
+            
+            {/* Transportation Module */}
+            <Route path="/transportation" element={<div className="p-12"><h1 className="text-3xl font-black text-slate-900">Transportation Module</h1><p className="text-slate-500 mt-4">Coming soon...</p></div>} />
+            
             <Route path="/student-master" element={<div className="p-6">Student Master Module Under Construction</div>} />
             <Route path="/course-management" element={<div className="p-6">Course Management Module Under Construction</div>} />
             <Route path="*" element={<Navigate to="/dashboard" />} />

@@ -30,7 +30,7 @@ const FinanceDashboard = () => {
         try {
             const trimmedVuid = vuid.trim();
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/students/vuid/${trimmedVuid}`, {
+            const response = await fetch(`http://localhost:3000/finance/vuid/${trimmedVuid}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -62,7 +62,7 @@ const FinanceDashboard = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/students/update-payment`, {
+            const response = await fetch(`http://localhost:3000/finance/update-payment`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

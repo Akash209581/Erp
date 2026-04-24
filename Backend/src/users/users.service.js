@@ -1,24 +1,23 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User, UserRole } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
+import { Injectable, Dependencies } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User, UserRole } from './entities/user.entity.js';
+import bcrypt from 'bcrypt';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
-  constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+@Dependencies(getRepositoryToken(User))
+export class UsersService {
+  constructor(usersRepository) {
+    this.usersRepository = usersRepository;
+  }
 
   async onModuleInit() {
     await this.seedAdmissionUser();
     await this.seedFinancerUser();
   }
 
-  private async seedAdmissionUser() {
+  async seedAdmissionUser() {
     const username = 'admission_office';
-    const password = 'Admission@2026'; // Stable credentials as requested
+    const password = 'Admission@2026';
     
     const existingUser = await this.usersRepository.findOneBy({ username });
     
@@ -37,7 +36,7 @@ export class UsersService implements OnModuleInit {
     }
   }
 
-  private async seedFinancerUser() {
+  async seedFinancerUser() {
     const username = 'financer_office';
     const password = 'Finance@2026';
     
@@ -58,12 +57,12 @@ export class UsersService implements OnModuleInit {
     }
   }
 
-  async findOne(username: string): Promise<User | null> {
+  async findOne(username) {
     console.log(`Searching for user: ${username}`);
     return this.usersRepository.findOneBy({ username });
   }
 
-  async create(userData: Partial<User>): Promise<User> {
+  async create(userData) {
     if (userData.password) {
       userData.password = await bcrypt.hash(userData.password, 10);
     }
