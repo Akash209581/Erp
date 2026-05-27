@@ -2,6 +2,7 @@ import { Injectable, Dependencies } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User, UserRole } from './entities/user.entity.js';
 import bcrypt from 'bcrypt';
+import { ILike } from 'typeorm';
 
 @Injectable()
 @Dependencies(getRepositoryToken(User))
@@ -11,8 +12,48 @@ export class UsersService {
   }
 
   async onModuleInit() {
+    await this.seedAdminUser();
+    await this.seedStudentUser();
     await this.seedAdmissionUser();
     await this.seedFinancerUser();
+  }
+
+  async seedAdminUser() {
+    const username = 'admin';
+    const password = 'Admin@2026';
+    
+    const existingUser = await this.usersRepository.findOneBy({ username });
+    
+    if (!existingUser) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = this.usersRepository.create({
+        username,
+        password: hashedPassword,
+        role: UserRole.ADMIN,
+        email: 'admin@vignan.ac.in',
+      });
+      await this.usersRepository.save(user);
+      console.log('Admin user created successfully');
+    }
+  }
+
+  async seedStudentUser() {
+    const username = 'student';
+    const password = 'Student@2026';
+    
+    const existingUser = await this.usersRepository.findOneBy({ username });
+    
+    if (!existingUser) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = this.usersRepository.create({
+        username,
+        password: hashedPassword,
+        role: UserRole.STUDENT,
+        email: 'student@vignan.ac.in',
+      });
+      await this.usersRepository.save(user);
+      console.log('Student user created successfully');
+    }
   }
 
   async seedAdmissionUser() {
@@ -59,7 +100,10 @@ export class UsersService {
 
   async findOne(username) {
     console.log(`Searching for user: ${username}`);
-    return this.usersRepository.findOneBy({ username });
+    if (!username) return null;
+    return this.usersRepository.findOne({
+      where: { username: ILike(username.trim()) }
+    });
   }
 
   async create(userData) {

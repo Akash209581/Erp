@@ -24,7 +24,8 @@ const Dashboard = ({ user }) => {
         }
       });
       if (response.ok) {
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : [];
         setAdmissions(data);
       }
     } catch (error) {

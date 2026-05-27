@@ -7,14 +7,14 @@ const Layout = ({ children, user, onLogout }) => {
       {/* Sidebar - fixed and non-collapsible for ERP */}
       <Sidebar user={user} onLogout={onLogout} />
       
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
+      {/* Main Content Area - Shifted right by the sidebar width (w-80 = 320px) */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc] ml-80">
         {/* Module Header */}
         <header className="h-20 bg-white border-b border-slate-200/60 flex items-center justify-between px-10 shadow-[0_1px_15px_-4px_rgba(0,0,0,0.05)] z-40">
           <div className="flex items-center gap-4">
             <div className="h-8 w-1 bg-blue-600 rounded-full"></div>
             <h2 className="text-[17px] font-black tracking-tight text-[#1e293b]">
-              Central University Management System
+              VFSTR Management System
             </h2>
           </div>
           
@@ -32,7 +32,7 @@ const Layout = ({ children, user, onLogout }) => {
 
         {/* Dynamic Content Scrollable */}
         <main className="flex-1 overflow-y-auto px-10 py-10 custom-scrollbar scroll-smooth">
-          <div className="max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-3 duration-700">
+          <div className="w-full animate-in fade-in slide-in-from-bottom-3 duration-700">
             {children}
           </div>
         </main>
