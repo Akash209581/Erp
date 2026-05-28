@@ -37,7 +37,7 @@ const Sidebar = ({ user, onLogout }) => {
 
   const menuItems = [
     // General Home
-    { title: 'Home', icon: <Home size={20} />, path: '/dashboard', roles: ['admin', 'admission', 'student', 'financer'] },
+    { title: 'Home', icon: <Home size={20} />, path: '/dashboard', roles: ['admin', 'admission', 'student', 'financer', 'transport_manager'] },
     
     // Admission Specific
     { title: 'Student Admission', icon: <UserPlus size={20} />, path: '/student-admission', roles: ['admin', 'admission'] },
@@ -66,7 +66,7 @@ const Sidebar = ({ user, onLogout }) => {
     { title: 'Psychometric Tests', icon: <BrainCircuit size={20} />, path: '/psychometric-tests', roles: ['student'] },
     { title: 'Quizes', icon: <Lightbulb size={20} />, path: '/quizes', roles: ['student'] },
     { title: 'Registrar Office', icon: <Package size={20} />, path: '/registrar-office', roles: ['student'] },
-    { title: 'My Transportation', icon: <Bus size={20} />, path: '/transportation', roles: ['student', 'admin'] },
+    { title: 'My Transportation', icon: <Bus size={20} />, path: '/transportation', roles: ['student', 'admin', 'transport_manager'] },
     { title: 'Ticketing Support', icon: <LifeBuoy size={20} />, path: '/ticketing-support', roles: ['student'] },
     { title: 'Time Tables', icon: <Clock size={20} />, path: '/time-tables', roles: ['student'] },
     { title: 'Phd Exist Survey Feedback', icon: <Search size={20} />, path: '/phd-survey', roles: ['student'] },

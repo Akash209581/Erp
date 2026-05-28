@@ -238,4 +238,7 @@ export class StudentMaster {
 
     @Column({ type: 'varchar', nullable: true })
     country;
+
+    @Column({ type: 'boolean', default: false })
+    isTransport;
 }

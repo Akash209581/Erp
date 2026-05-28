@@ -7,7 +7,9 @@ export const UserRole = {
   FINANCE: 'finance',
   FINANCER: 'financer',
   STAFF: 'staff',
-  ADMISSION: 'admission'
+  ADMISSION: 'admission',
+  WARDEN: 'warden',
+  TRANSPORT_MANAGER: 'transport_manager'
 };
 
 @Entity('users')

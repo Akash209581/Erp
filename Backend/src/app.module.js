@@ -12,6 +12,18 @@ import { Finance } from './finance/entities/finance.entity.js';
 import { UsersModule } from './users/users.module.js';
 import { User } from './users/entities/user.entity.js';
 import { AuthModule } from './auth/auth.module.js';
+import { Bus } from './transportation/entities/bus.entity.js';
+import { Driver } from './transportation/entities/driver.entity.js';
+import { Route } from './transportation/entities/route.entity.js';
+import { RouteStop } from './transportation/entities/route-stop.entity.js';
+import { TransportAllocation } from './transportation/entities/transport-allocation.entity.js';
+import { UserTransportDetail } from './transportation/entities/user-transport-detail.entity.js';
+import { BusLocation } from './transportation/entities/bus-location.entity.js';
+import { BusDocumentType } from './transportation/entities/bus-document-type.entity.js';
+import { BusDocument } from './transportation/entities/bus-document.entity.js';
+import { TransportRider } from './transportation/entities/transport-rider.entity.js';
+import { FuelAllocation } from './transportation/entities/fuel-allocation.entity.js';
+import { BusBreakdown } from './transportation/entities/bus-breakdown.entity.js';
 
 @Module({
   imports: [
@@ -21,11 +33,26 @@ import { AuthModule } from './auth/auth.module.js';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      entities: [StudentMaster, FinanceStudent, Finance, User],
+      entities: [
+        StudentMaster, 
+        FinanceStudent, 
+        Finance, 
+        User,
+        Bus,
+        Driver,
+        Route,
+        RouteStop,
+        TransportAllocation,
+        UserTransportDetail,
+        BusLocation,
+        BusDocumentType,
+        BusDocument,
+        TransportRider,
+        FuelAllocation,
+        BusBreakdown
+      ],
       synchronize: true,
-      ssl: {
-          rejectUnauthorized: false
-      }
+      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
     StudentsModule,
     FinanceModule,
