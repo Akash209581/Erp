@@ -1,11 +1,10 @@
-DATABASE_URL=postgresql://postgres:root@localhost:5432/postgres
+DATABASE_URL=
 DATABASE_SSL=false
 PORT=3000
 APP_NAME="VFSTR ERP"
 ENV="dev"
 
-# DATABASE_URL="postgresql+asyncpg://postgres:root@localhost:5432/postgres"
-
+# DATABASE_URL=
 JWT_SECRET="change_me_dev_only"
 JWT_ALG="HS256"
 JWT_EXPIRES_MINUTES=720
