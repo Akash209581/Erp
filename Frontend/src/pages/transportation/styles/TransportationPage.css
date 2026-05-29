@@ -1,0 +1,53 @@
+/* Transportation Page Styles */
+
+.transportation-page {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  background: #f1f5f9;
+}
+
+.admin-nav {
+  display: flex;
+  gap: 10px;
+  padding: 20px 30px;
+  background: white;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.nav-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.admin-content {
+  padding: 20px 0;
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.faculty-content,
+.student-content {
+  padding: 20px 30px;
+}

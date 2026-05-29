@@ -1,0 +1,108 @@
+.bus-seat-map {
+  background: #f8fafc;
+  border: 4px solid #cbd5e1;
+  border-radius: 40px 40px 10px 10px;
+  padding: 20px;
+  max-width: 640px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+}
+
+.bus-front {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px 20px;
+  border-bottom: 2px dashed #cbd5e1;
+  margin-bottom: 20px;
+}
+
+.steering-wheel {
+  font-size: 1.5rem;
+}
+
+.entrance {
+  font-size: 1.5rem;
+}
+
+.seats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.seat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seat-pair {
+  display: flex;
+  gap: 8px;
+}
+
+.bus-aisle {
+  width: 60px;
+  height: 40px;
+  background: #e2e8f0;
+  border-radius: 4px;
+}
+
+.seat {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: help;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.seat.empty {
+  background: white;
+}
+
+.seat.staff.empty { border-color: #6366f1; color: #6366f1; }
+.seat.girl.empty { border-color: #ec4899; color: #ec4899; }
+.seat.boy.empty { border-color: #3b82f6; color: #3b82f6; }
+
+.seat.occupied {
+  background: #64748b;
+  color: white;
+  border-color: #475569;
+}
+
+.seat:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.map-legend {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
+
+.legend-color.staff { border: 1.5px solid #6366f1; }
+.legend-color.girl { border: 1.5px solid #ec4899; }
+.legend-color.boy { border: 1.5px solid #3b82f6; }
+.legend-color.occupied { background: #64748b; }

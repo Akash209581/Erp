@@ -1,0 +1,47 @@
+import 'reflect-metadata';
+import { createConnection } from 'typeorm';
+import { TransportationService } from './src/transportation/transportation.service.js';
+import { Bus } from './src/transportation/entities/bus.entity.js';
+import { Driver } from './src/transportation/entities/driver.entity.js';
+import { Route } from './src/transportation/entities/route.entity.js';
+import { RouteStop } from './src/transportation/entities/route-stop.entity.js';
+import { TransportAllocation } from './src/transportation/entities/transport-allocation.entity.js';
+import { UserTransportDetail } from './src/transportation/entities/user-transport-detail.entity.js';
+import { BusLocation } from './src/transportation/entities/bus-location.entity.js';
+import { StudentMaster } from './src/students/entities/student-master.entity.js';
+import dotenv from 'dotenv';
+import fs from 'fs';
+
+dotenv.config();
+
+async function run() {
+    try {
+        const connection = await createConnection({
+            type: 'postgres',
+            url: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false },
+            entities: [Bus, Driver, Route, RouteStop, TransportAllocation, UserTransportDetail, BusLocation, StudentMaster]
+        });
+
+        const service = new TransportationService(
+            connection.getRepository(Bus),
+            connection.getRepository(Driver),
+            connection.getRepository(Route),
+            connection.getRepository(RouteStop),
+            connection.getRepository(TransportAllocation),
+            connection.getRepository(UserTransportDetail),
+            connection.getRepository(BusLocation),
+            connection.getRepository(StudentMaster)
+        );
+
+        console.log('Running auto-allocate...');
+        const result = await service.autoAllocateSeats(1);
+        fs.writeFileSync('scratch/auto-allocate-result.txt', JSON.stringify(result));
+        
+        await connection.close();
+    } catch (e) {
+        fs.writeFileSync('scratch/auto-allocate-error.txt', e.stack || e.message);
+    }
+}
+
+run();

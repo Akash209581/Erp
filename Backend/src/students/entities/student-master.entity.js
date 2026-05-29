@@ -241,4 +241,7 @@ export class StudentMaster {
 
     @Column({ type: 'varchar', nullable: true })
     createdBy;
+
+    @Column({ type: 'boolean', default: false })
+    isTransport;
 }
