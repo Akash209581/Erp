@@ -1,6 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import {
   Home,
   GraduationCap,
   ClipboardCheck,
@@ -29,19 +29,21 @@ import {
   UserPlus,
   DollarSign,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 
 const Sidebar = ({ user, onLogout }) => {
   const currentRole = user?.user?.role || user?.role;
+  const location = useLocation();
+  const [expandedItem, setExpandedItem] = useState('Hostel Management');
 
   const menuItems = [
     // General Home
     { title: 'Home', icon: <Home size={20} />, path: '/dashboard', roles: ['admin', 'admission', 'student', 'financer', 'transport_manager'] },
-    
     // Admission Specific
     { title: 'Student Admission', icon: <UserPlus size={20} />, path: '/student-admission', roles: ['admin', 'admission'] },
-    
+
     // Finance Specific
     { title: 'Fee Management', icon: <DollarSign size={20} />, path: '/finance-dashboard', roles: ['admin', 'financer'] },
 
@@ -56,7 +58,22 @@ const Sidebar = ({ user, onLogout }) => {
     { title: 'Exam Section', icon: <FileText size={20} />, path: '/exam-section', roles: ['student'] },
     { title: 'Feedback', icon: <MessageSquare size={20} />, path: '/feedback', roles: ['student'] },
     { title: 'Fee Payments', icon: <CreditCard size={20} />, path: '/fee-payments', roles: ['student'] },
-    { title: 'Hostel Management', icon: <Building2 size={20} />, path: '/hostel', roles: ['student', 'admin'] },
+
+    // Hostel Management Dropdown
+    {
+      title: 'Hostel Management',
+      icon: <Building2 size={20} />,
+      path: '/hostel',
+      roles: ['student', 'admin', 'warden'],
+      subMenu: [
+        { title: 'Residence Dashboard', path: '/hostel', roles: ['student', 'admin', 'warden'] },
+        { title: 'Hostel Attendance', path: '/hostel/attendance', roles: ['warden', 'admin'] },
+        { title: 'Hostel Complaints', path: '/hostel/complaints', roles: ['student', 'admin', 'warden'] },
+        { title: 'Outpass & Visitors', path: '/hostel/visitors', roles: ['student', 'admin', 'warden'] },
+        { title: 'Hostel Students', path: '/hostel/admin/students', roles: ['admin'] },
+      ]
+    },
+
     { title: 'Hallticket', icon: <Ticket size={20} />, path: '/hallticket', roles: ['student'] },
     { title: 'Infrastructure Related', icon: <Construction size={20} />, path: '/infrastructure-related', roles: ['student'] },
     { title: 'Library', icon: <Library size={20} />, path: '/library', roles: ['student', 'admin'] },
@@ -74,6 +91,10 @@ const Sidebar = ({ user, onLogout }) => {
 
   const filteredItems = menuItems.filter(item => item.roles.includes(currentRole));
 
+  const toggleExpand = (title) => {
+    setExpandedItem(expandedItem === title ? null : title);
+  };
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-80 bg-white border-r border-slate-100 flex flex-col z-50">
       <div className="p-8 border-b border-slate-50 flex items-center gap-3">
@@ -87,40 +108,90 @@ const Sidebar = ({ user, onLogout }) => {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
-        {filteredItems.map((item, index) => (
-          <NavLink
-            key={index}
-            to={item.path}
-            className={({ isActive }) => `
-              flex items-center justify-between px-5 py-4 rounded-2xl transition-all duration-300 group
-              ${isActive 
-                ? 'bg-red-50 text-[#8B1A1A] shadow-sm' 
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
-            `}
-          >
-            <div className="flex items-center gap-4">
-              <span className={`transition-colors duration-300 ${item.roles.includes('student') ? 'text-[#a16b47]' : 'text-slate-400'} group-hover:text-[#8B1A1A]`}>
-                {item.icon}
-              </span>
-              <span className="font-bold text-sm tracking-tight">{item.title}</span>
+        {filteredItems.map((item, index) => {
+          const hasSubMenu = item.subMenu && item.subMenu.length > 0;
+          const isExpanded = expandedItem === item.title;
+          const isActive = location.pathname.startsWith(item.path);
+
+          return (
+            <div key={index} className="space-y-1">
+              {hasSubMenu ? (
+                <button
+                  onClick={() => toggleExpand(item.title)}
+                  className={`
+                    w-full flex items-center justify-between px-5 py-4 rounded-2xl transition-all duration-300 group
+                    ${isActive && !isExpanded
+                      ? 'bg-red-50 text-[#8B1A1A] shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                  `}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className={`transition-colors duration-300 ${isActive ? 'text-[#8B1A1A]' : 'text-slate-400'} group-hover:text-[#8B1A1A]`}>
+                      {item.icon}
+                    </span>
+                    <span className="font-bold text-sm tracking-tight">{item.title}</span>
+                  </div>
+                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </button>
+              ) : (
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) => `
+                    flex items-center justify-between px-5 py-4 rounded-2xl transition-all duration-300 group
+                    ${isActive
+                      ? 'bg-red-50 text-[#8B1A1A] shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                  `}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className={`transition-colors duration-300 ${item.roles.includes('student') ? 'text-[#a16b47]' : 'text-slate-400'} group-hover:text-[#8B1A1A]`}>
+                      {item.icon}
+                    </span>
+                    <span className="font-bold text-sm tracking-tight">{item.title}</span>
+                  </div>
+                  <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </NavLink>
+              )}
+
+              {hasSubMenu && isExpanded && (
+                <div className="ml-9 space-y-1 animate-in slide-in-from-top-2 duration-300">
+                  {item.subMenu
+                    .filter(sub => sub.roles.includes(currentRole))
+                    .map((sub, subIndex) => (
+                      <NavLink
+                        key={subIndex}
+                        to={sub.path}
+                        end={sub.path === item.path}
+                        className={({ isActive }) => `
+                          flex items-center justify-between px-5 py-3 rounded-xl transition-all duration-300 group
+                          ${isActive
+                            ? 'text-[#8B1A1A] bg-red-50/50 font-black'
+                            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}
+                        `}
+                      >
+                        <span className="text-xs font-bold tracking-tight">{sub.title}</span>
+                        <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      </NavLink>
+                    ))}
+                </div>
+              )}
             </div>
-            <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-          </NavLink>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="p-6 border-t border-slate-50 bg-slate-50/50">
         <div className="flex items-center justify-between gap-3 p-4 rounded-3xl bg-white border border-slate-100 shadow-sm">
           <div className="flex items-center gap-3 min-w-0">
-             <div className="w-10 h-10 rounded-2xl bg-[#8B1A1A] flex items-center justify-center text-white font-black shrink-0 shadow-md">
-               {(user?.user?.username || user?.username || 'U').charAt(0).toUpperCase()}
-             </div>
-             <div className="min-w-0">
-               <p className="text-xs font-black text-slate-900 truncate tracking-tight">{user?.user?.username || user?.username}</p>
-               <p className="text-[10px] text-slate-400 truncate uppercase font-black tracking-widest">{currentRole} Portal</p>
-             </div>
+            <div className="w-10 h-10 rounded-2xl bg-[#8B1A1A] flex items-center justify-center text-white font-black shrink-0 shadow-md">
+              {(user?.user?.username || user?.username || 'U').charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-black text-slate-900 truncate tracking-tight">{user?.user?.username || user?.username}</p>
+              <p className="text-[10px] text-slate-400 truncate uppercase font-black tracking-widest">{currentRole} Portal</p>
+            </div>
           </div>
-          <button 
+          <button
             onClick={onLogout}
             className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all active:scale-90"
             title="Logout"

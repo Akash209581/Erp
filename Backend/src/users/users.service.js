@@ -16,6 +16,8 @@ export class UsersService {
     await this.seedStudentUser();
     await this.seedAdmissionUser();
     await this.seedFinancerUser();
+    await this.seedWardenUser();
+    await this.seedAdminUser();
   }
 
   async seedAdminUser() {
@@ -59,9 +61,9 @@ export class UsersService {
   async seedAdmissionUser() {
     const username = 'admission_office';
     const password = 'Admission@2026';
-    
+
     const existingUser = await this.usersRepository.findOneBy({ username });
-    
+
     if (!existingUser) {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = this.usersRepository.create({
@@ -80,9 +82,9 @@ export class UsersService {
   async seedFinancerUser() {
     const username = 'financer_office';
     const password = 'Finance@2026';
-    
+
     const existingUser = await this.usersRepository.findOneBy({ username });
-    
+
     if (!existingUser) {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = this.usersRepository.create({
@@ -95,6 +97,40 @@ export class UsersService {
       console.log('Financer user created successfully');
     } else {
       console.log('Financer user already exists');
+    }
+  }
+
+  async seedWardenUser() {
+    const username = 'hostel_warden';
+    const password = 'Warden@2026';
+    const existingUser = await this.usersRepository.findOneBy({ username });
+    if (!existingUser) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = this.usersRepository.create({
+        username,
+        password: hashedPassword,
+        role: UserRole.WARDEN,
+        email: 'warden@vignan.ac.in',
+      });
+      await this.usersRepository.save(user);
+      console.log('Warden user created successfully');
+    }
+  }
+
+  async seedAdminUser() {
+    const username = 'chief_warden';
+    const password = 'Admin@2026';
+    const existingUser = await this.usersRepository.findOneBy({ username });
+    if (!existingUser) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = this.usersRepository.create({
+        username,
+        password: hashedPassword,
+        role: UserRole.ADMIN,
+        email: 'admin@vignan.ac.in',
+      });
+      await this.usersRepository.save(user);
+      console.log('Admin user created successfully');
     }
   }
 
