@@ -24,6 +24,18 @@ import { BusDocument } from './transportation/entities/bus-document.entity.js';
 import { TransportRider } from './transportation/entities/transport-rider.entity.js';
 import { FuelAllocation } from './transportation/entities/fuel-allocation.entity.js';
 import { BusBreakdown } from './transportation/entities/bus-breakdown.entity.js';
+import { Hostel } from './hostel/entities/hostel.entity.js';
+import { Block } from './hostel/entities/block.entity.js';
+import { Room } from './hostel/entities/room.entity.js';
+import { Allocation } from './hostel/entities/allocation.entity.js';
+import { HostelComplaint } from './hostel/entities/complaint.entity.js';
+import { HostelAttendance } from './hostel/entities/attendance.entity.js';
+import { HostelVisitor } from './hostel/entities/visitor.entity.js';
+import { Campus } from './hostel/entities/campus.entity.js';
+import { HostelAuditLog } from './hostel/entities/audit-log.entity.js';
+import { HostelBroadcast } from './hostel/entities/broadcast.entity.js';
+import { LeaveRequest } from './hostel/entities/leave-request.entity.js';
+import { HostelAsset } from './hostel/entities/asset.entity.js';
 
 @Module({
   imports: [
@@ -49,7 +61,9 @@ import { BusBreakdown } from './transportation/entities/bus-breakdown.entity.js'
         BusDocument,
         TransportRider,
         FuelAllocation,
-        BusBreakdown
+        BusBreakdown,
+        Hostel, Block, Room, Allocation, HostelComplaint, HostelAttendance, HostelVisitor, Campus, HostelAuditLog,
+        HostelBroadcast, LeaveRequest, HostelAsset
       ],
       synchronize: true,
       ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,

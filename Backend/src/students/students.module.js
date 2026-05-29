@@ -14,5 +14,6 @@ import { UsersModule } from '../users/users.module.js';
   ],
   controllers: [StudentsController],
   providers: [StudentsService],
+  exports: [StudentsService],
 })
 export class StudentsModule {}

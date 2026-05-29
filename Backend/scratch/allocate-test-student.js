@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -12,6 +13,24 @@ async function runQuery() {
   try {
     await client.connect();
     console.log('Connected to database successfully');
+
+    // 0. Ensure user exists and has a known password (Student@2026)
+    const hashedPassword = await bcrypt.hash('Student@2026', 10);
+    const userRes = await client.query(`SELECT id FROM users WHERE username = '211FA04001'`);
+    if (userRes.rows.length === 0) {
+      await client.query(`
+        INSERT INTO users (id, username, password, role, email, "isActive", "createdAt", "updatedAt")
+        VALUES (gen_random_uuid(), '211FA04001', $1, 'student', 'student@vignan.ac.in', true, now(), now())
+      `, [hashedPassword]);
+      console.log('Created user 211FA04001 in users table');
+    } else {
+      await client.query(`
+        UPDATE users 
+        SET password = $1, role = 'student'
+        WHERE username = '211FA04001'
+      `, [hashedPassword]);
+      console.log('Updated password for user 211FA04001 in users table');
+    }
 
     // 1. Update student_master
     await client.query(`

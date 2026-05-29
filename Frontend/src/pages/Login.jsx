@@ -12,6 +12,18 @@ const Login = ({ onLogin }) => {
     setError('');
     setIsLoading(true);
 
+    // Dummy credentials bypass for development
+    if (username === 'hostel_warden' && password === 'Warden@2026') {
+      onLogin({ access_token: 'dummy-token', user: { username: 'hostel_warden', role: 'warden' } });
+      setIsLoading(false);
+      return;
+    }
+    if (username === 'chief_warden' && password === 'Admin@2026') {
+      onLogin({ access_token: 'dummy-token', user: { username: 'chief_warden', role: 'admin' } });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
