@@ -6,7 +6,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "checkJs": false,
-    "allowJs": true
+    "allowJs": true,
+    "types": []
   },
   "exclude": ["node_modules", "dist"]
 }

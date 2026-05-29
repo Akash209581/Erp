@@ -39,6 +39,14 @@ const InputField = ({ label, name, value, onChange, type = "text", placeholder, 
   </div>
 );
 
+const courseBranches = {
+  'B.Tech': ['CSE', 'ECE', 'ME', 'CE', 'IT', 'EEE', 'AI&DS'],
+  'M.Tech': ['CSE', 'VLSI', 'Power Systems', 'Machine Design'],
+  'MBA': ['Finance', 'HR', 'Marketing', 'Operations'],
+  'MCA': ['General'],
+  'PHD': ['Engineering', 'Management', 'Sciences']
+};
+
 const StudentAdmission = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -143,10 +151,63 @@ const StudentAdmission = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'coursecode') {
+      setFormData(prev => ({ ...prev, [name]: value, branchcode: '' }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
-  const nextStep = () => setStep(prev => Math.min(prev + 1, 5));
+  const validateStep = (currentStep) => {
+    let requiredFields = [];
+    let stepName = "";
+
+    switch (currentStep) {
+      case 1:
+        requiredFields = ['vuid', 'name', 'coursecode', 'branchcode', 'batchno', 'doj', 'total_fee_fixed', 'scholarship_amount'];
+        stepName = "Basis Docs";
+        break;
+      case 2:
+        requiredFields = ['gender', 'dob', 'studentmobile', 'studentemailid', 'mothertongue', 'Religion', 'caste', 'ReserveCategory', 'pysicallyhandi', 'Hostel', 'Transportation', 'country', 'houseno', 'street', 'town', 'mandal', 'district', 'state', 'pincode'];
+        stepName = "Personal & Address";
+        break;
+      case 3:
+        requiredFields = ['ssctype', 'sscpassyear', 'sscschool', 'tenthpercent', 'sscdistrict', 'intertype', 'interpassyear', 'intercollege', 'interpercent', 'entrancetestrank', 'state'];
+        stepName = "Education";
+        break;
+      case 4:
+        requiredFields = ['fathername', 'fathereducation', 'fatheroccupation', 'mothername', 'mothereducation', 'annualincome', 'parentemailid', 'fathermobile', 'familystatus'];
+        stepName = "Family";
+        break;
+      default:
+        return true;
+    }
+
+    for (const field of requiredFields) {
+      const val = formData[field];
+      if (val === undefined || val === null || val.toString().trim() === '') {
+        setError(`Please fill in all fields in ${stepName}.`);
+        return false;
+      }
+    }
+    setError('');
+    return true;
+  };
+
+  const handleStepChange = (newStep) => {
+    if (newStep > step) {
+      for (let i = step; i < newStep; i++) {
+        if (!validateStep(i)) return;
+      }
+    }
+    setStep(newStep);
+  };
+
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep(prev => Math.min(prev + 1, 5));
+    }
+  };
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const handleSubmit = async (e) => {
@@ -189,7 +250,7 @@ const StudentAdmission = () => {
            </div>
            <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Admission Confirmed!</h1>
            <div className="inline-block px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl mb-6">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">VUID</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Reference Number (VUID)</span>
               <span className="text-xl font-black text-indigo-600 tracking-wider font-mono">{formData.vuid}</span>
            </div>
            <p className="text-slate-500 font-medium mb-10 leading-relaxed text-sm">The student record has been successfully created and assigned ID <b>{formData.vuid}</b> in the master database.</p>
@@ -220,11 +281,11 @@ const StudentAdmission = () => {
 
       <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
         <div className="flex border-b border-slate-50">
-           <button type="button" onClick={() => setStep(1)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 1 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Basis Docs</button>
-           <button type="button" onClick={() => setStep(2)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 2 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Personal</button>
-           <button type="button" onClick={() => setStep(3)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 3 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Education</button>
-           <button type="button" onClick={() => setStep(4)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 4 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Family</button>
-           <button type="button" onClick={() => setStep(5)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 5 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Review</button>
+           <button type="button" onClick={() => handleStepChange(1)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 1 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Basis Docs</button>
+           <button type="button" onClick={() => handleStepChange(2)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 2 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Personal</button>
+           <button type="button" onClick={() => handleStepChange(3)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 3 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Education</button>
+           <button type="button" onClick={() => handleStepChange(4)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 4 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Family</button>
+           <button type="button" onClick={() => handleStepChange(5)} className={`flex-1 py-6 font-black text-[11px] uppercase tracking-widest transition-all ${step === 5 ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:bg-slate-50/50'}`}>Review</button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-10 md:p-14">
@@ -246,14 +307,10 @@ const StudentAdmission = () => {
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  <InputField label="VUID" name="vuid" value={formData.vuid} onChange={handleChange} placeholder="Unique ID (e.g. VU24-001)" />
                  <InputField label="Student Name" name="name" value={formData.name} onChange={handleChange} placeholder="Full legal name" />
-                 <InputField label="Course Code" name="coursecode" value={formData.coursecode} onChange={handleChange} options={['B.Tech', 'M.Tech', 'MBA', 'MCA', 'PHD']} />
-                 <InputField label="Branch" name="branchcode" value={formData.branchcode} onChange={handleChange} options={['CSE', 'ECE', 'ME', 'CE', 'IT']} />
-                 <InputField label="Current Year" name="cyear" value={formData.cyear} onChange={handleChange} options={['1', '2', '3', '4']} />
-                 <InputField label="Semester" name="semester" value={formData.semester} onChange={handleChange} options={['1', '2', '3', '4', '5', '6', '7', '8']} />
-                 <InputField label="Section" name="sectioncode" value={formData.sectioncode} onChange={handleChange} placeholder="A/B/C..." />
+                 <InputField label="Course Code" name="coursecode" value={formData.coursecode} onChange={handleChange} options={Object.keys(courseBranches)} />
+                 <InputField label="Branch" name="branchcode" value={formData.branchcode} onChange={handleChange} options={courseBranches[formData.coursecode] || []} />
                  <InputField label="Batch No" name="batchno" value={formData.batchno} onChange={handleChange} placeholder="e.g. 2026-F" />
                  <InputField label="Date of Join" name="doj" value={formData.doj} onChange={handleChange} type="date" />
-                 <InputField label="Admission Fee Paid" name="admission_fee" value={formData.admission_fee} onChange={handleChange} options={['Yes', 'No']} />
                  <InputField label="Total Fixed Fee" name="total_fee_fixed" value={formData.total_fee_fixed} onChange={handleChange} type="number" placeholder="0.00" />
                  <InputField label="Scholarship Amount" name="scholarship_amount" value={formData.scholarship_amount} onChange={handleChange} type="number" placeholder="0.00" />
                </div>
@@ -332,6 +389,7 @@ const StudentAdmission = () => {
                      <InputField label="College" name="intercollege" value={formData.intercollege} onChange={handleChange} />
                      <InputField label="Percentage" name="interpercent" value={formData.interpercent} onChange={handleChange} />
                      <InputField label="Entrance Rank" name="entrancetestrank" value={formData.entrancetestrank} onChange={handleChange} />
+                     <InputField label="State" name="state" value={formData.state} onChange={handleChange} placeholder="Enter State" />
                    </div>
                  </div>
                </section>
@@ -382,10 +440,6 @@ const StudentAdmission = () => {
                         <span className="text-sm text-slate-500 font-medium">Course/Branch</span>
                         <span className="text-sm text-slate-900 font-bold">{formData.coursecode} / {formData.branchcode}</span>
                       </div>
-                      <div className="flex justify-between border-b border-slate-50 pb-2">
-                        <span className="text-sm text-slate-500 font-medium">Year/Sem</span>
-                        <span className="text-sm text-slate-900 font-bold">{formData.cyear} Year / {formData.semester} Sem</span>
-                      </div>
                     </div>
                   </div>
 
@@ -414,10 +468,6 @@ const StudentAdmission = () => {
                       <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div> Financial Summary
                     </h3>
                     <div className="space-y-4">
-                      <div className="flex justify-between border-b border-slate-50 pb-2">
-                        <span className="text-sm text-slate-500 font-medium">Admission Fee</span>
-                        <span className="text-sm text-slate-900 font-bold">₹{formData.admission_fee || '0.00'}</span>
-                      </div>
                       <div className="flex justify-between border-b border-slate-50 pb-2">
                         <span className="text-sm text-slate-500 font-medium">Fixed Fee</span>
                         <span className="text-sm text-slate-900 font-bold">₹{formData.total_fee_fixed || '0.00'}</span>

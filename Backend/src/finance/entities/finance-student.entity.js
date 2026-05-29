@@ -245,10 +245,10 @@ export class FinanceStudent {
     @Column({ type: 'varchar', nullable: true })
     admission_fee;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
     total_fee_fixed;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
     scholarship_amount;
 
     @Column({ type: 'varchar', nullable: true })

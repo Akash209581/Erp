@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Request, NotFoundException, Dependencies } from '@nestjs/common';
 import { FinanceService } from './finance.service.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { UserRole } from '../users/entities/user.entity.js';
 
 @Controller('finance')
 @Dependencies(FinanceService)
@@ -12,7 +13,11 @@ export class FinanceController {
   @UseGuards(JwtAuthGuard)
   @Get('students')
   findAllFinance(@Request() req) {
-    return this.financeService.findAllFinance(req.user.username);
+    // Admins and Finance staff can see all records. 
+    // Admission officers can only see records they created.
+    const fullAccessRoles = [UserRole.ADMIN, UserRole.FINANCE, UserRole.FINANCER];
+    const filterUsername = fullAccessRoles.includes(req.user.role) ? null : req.user.username;
+    return this.financeService.findAllFinance(filterUsername);
   }
 
   @UseGuards(JwtAuthGuard)

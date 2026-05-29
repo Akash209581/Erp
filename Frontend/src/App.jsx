@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import StudentAdmission from './pages/finance/StudentAdmission';
 import FinanceDashboard from './pages/finance/FinanceDashboard';
+import AdmissionReport from './pages/finance/AdmissionReport';
 import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 
@@ -53,6 +54,7 @@ const App = () => {
             {/* Finance Module */}
             <Route path="/student-admission" element={<StudentAdmission user={user} />} />
             <Route path="/finance-dashboard" element={<FinanceDashboard user={user} />} />
+            <Route path="/admission-report" element={<AdmissionReport user={user} />} />
             
             {/* Library Module */}
             <Route path="/library" element={<div className="p-12"><h1 className="text-3xl font-black text-slate-900">Library Module</h1><p className="text-slate-500 mt-4">Coming soon...</p></div>} />

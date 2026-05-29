@@ -11,14 +11,17 @@ import {
   Save
 } from 'lucide-react';
 
+import { useNavigate } from 'react-router-dom';
+
 const Dashboard = ({ user }) => {
   const [admissions, setAdmissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchAdmissions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/students/finance', {
+      const response = await fetch('http://localhost:3000/finance/students', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -38,11 +41,14 @@ const Dashboard = ({ user }) => {
     fetchAdmissions();
   }, []);
 
+  const admissionsToday = admissions.filter(a => {
+    const today = new Date().toDateString();
+    return new Date(a.createdAt).toDateString() === today;
+  }).length;
+
   const stats = [
-    { label: 'My Total Admissions', value: admissions.length.toString(), trend: 'Real-time', color: 'from-blue-600 to-indigo-600', icon: <UserCheck size={20} /> },
-    { label: 'Pending Verification', value: '12', trend: '+2 today', color: 'from-emerald-500 to-teal-600', icon: <Clock size={20} /> },
-    { label: 'Recent Success Rate', value: '98%', trend: 'Stable', color: 'from-amber-500 to-orange-600', icon: <TrendingUp size={20} /> },
-    { label: 'Active Students', value: '24,582', trend: '+12%', color: 'from-indigo-600 to-violet-600', icon: <Users size={20} /> },
+    { label: 'My Total Admissions', value: admissions.length.toString(), trend: 'Lifetime', color: 'from-blue-600 to-indigo-600', icon: <UserCheck size={20} /> },
+    { label: 'Admissions Today', value: admissionsToday.toString(), trend: 'Real-time', color: 'from-emerald-500 to-teal-600', icon: <Clock size={20} /> },
   ];
 
   const username = user?.user?.username || user?.username || 'User';
@@ -57,9 +63,12 @@ const Dashboard = ({ user }) => {
           <h1 className='text-3xl font-black tracking-tight text-slate-900 capitalize'>{role} Dashboard</h1>
         </div>
         <div className='flex items-center gap-3 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm'>
-          <button className='px-6 py-2.5 bg-slate-900 text-white text-xs font-black rounded-xl shadow-lg shadow-black/10 tracking-widest uppercase hover:scale-[1.02] transition-transform flex items-center gap-2'>
-            <ArrowUpRight size={14} />
-            Admission Report
+          <button 
+            onClick={() => navigate('/admission-report')}
+            className='px-6 py-2.5 bg-slate-900 text-white text-[11px] font-black rounded-xl shadow-xl shadow-slate-900/20 tracking-widest uppercase hover:translate-y-[-2px] active:translate-y-0 transition-all flex items-center gap-2 group'
+          >
+             <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform" />
+             Admission Report
           </button>
         </div>
       </div>
@@ -83,127 +92,124 @@ const Dashboard = ({ user }) => {
         ))}
       </div>
 
-      {/* Main Content Sections */}
-      <div className='grid grid-cols-1 xl:grid-cols-3 gap-8'>
-        <div className='xl:col-span-2 space-y-6'>
-          <div className='bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] overflow-hidden'>
-             <div className='p-8 border-b border-slate-50 flex items-center justify-between flex-wrap gap-4'>
-               <div>
-                 <h3 className='text-xl font-black text-slate-900 tracking-tight'>My Recent Admissions</h3>
-                 <p className='text-xs text-slate-400 font-medium mt-1'>Records you have created in the system</p>
-               </div>
-               <div className='flex items-center gap-2'>
-                  <div className='relative'>
-                    <Search className='absolute left-3 top-1/2 -translate-y-1/2 text-slate-400' size={14} />
-                    <input type="text" placeholder="Search VUID..." className='pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 outline-none w-48' />
-                  </div>
-                  <button className='p-2 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 transition-colors'>
-                    <Filter size={16} />
-                  </button>
-               </div>
-             </div>
-             
-             <div className='overflow-x-auto'>
-                <table className='w-full text-left border-collapse'>
-                   <thead>
-                      <tr className='bg-slate-50/50'>
-                         <th className='px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Student Details</th>
-                         <th className='px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest'>VUID</th>
-                         <th className='px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Course/Branch</th>
-                         <th className='px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Date</th>
-                         <th className='px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Action</th>
-                      </tr>
-                   </thead>
-                   <tbody className='divide-y divide-slate-50'>
-                      {admissions.length > 0 ? (
-                        admissions.map((student) => (
-                          <tr key={student.vuid} className='hover:bg-slate-50/50 transition-colors group'>
-                            <td className='px-8 py-5'>
-                               <div className='flex items-center gap-3'>
-                                  <div className='w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-sm'>
-                                    {student.name.charAt(0)}
-                                  </div>
-                                  <div>
-                                     <p className='text-sm font-bold text-slate-900'>{student.name}</p>
-                                     <p className='text-[10px] text-slate-400 font-medium'>{student.studentemailid}</p>
-                                  </div>
-                               </div>
-                            </td>
-                            <td className='px-8 py-5'>
-                               <span className='px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-black font-mono border border-indigo-100'>
-                                 {student.vuid}
-                               </span>
-                            </td>
-                            <td className='px-8 py-5'>
-                               <p className='text-xs font-bold text-slate-700'>{student.coursecode}</p>
-                               <p className='text-[10px] text-slate-400 font-medium'>{student.branchcode}</p>
-                            </td>
-                            <td className='px-8 py-5'>
-                               <p className='text-xs font-bold text-slate-700'>{new Date(student.createdAt).toLocaleDateString()}</p>
-                               <p className='text-[10px] text-slate-400 font-medium'>{new Date(student.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                            </td>
-                            <td className='px-8 py-5'>
-                               <button className='p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all'>
-                                 <ExternalLink size={16} />
-                               </button>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                           <td colSpan="5" className='px-8 py-12 text-center'>
-                              <div className='flex flex-col items-center gap-3 grayscale opacity-30'>
-                                <Users size={48} />
-                                <p className='text-sm font-bold text-slate-500'>No admissions recorded yet.</p>
+      {/* Quick Access Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <button className="flex items-center gap-4 p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group text-left">
+          <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+            <Search size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-black text-slate-900 tracking-tight">Student Search</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Find records</p>
+          </div>
+        </button>
+        <button className="flex items-center gap-4 p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group text-left">
+          <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all">
+            <Save size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-black text-slate-900 tracking-tight">Draft Admissions</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">In-progress</p>
+          </div>
+        </button>
+        <button className="flex items-center gap-4 p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group text-left">
+          <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+            <TrendingUp size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-black text-slate-900 tracking-tight">Export Data</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">CSV / PDF</p>
+          </div>
+        </button>
+      </div>
+
+      {/* Main Table Section */}
+      <div className='bg-white rounded-[3rem] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden'>
+         <div className='p-8 md:p-12 border-b border-slate-50 flex items-center justify-between flex-wrap gap-6'>
+           <div>
+             <h3 className='text-xl font-black text-slate-900 tracking-tight'>My Recent Admissions</h3>
+             <p className='text-xs text-slate-400 font-bold uppercase tracking-widest mt-1'>Detailed student enrollment records</p>
+           </div>
+           <div className='flex items-center gap-4'>
+              <div className='relative group'>
+                <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors' size={16} />
+                <input type="text" placeholder="Search VUID..." className='pl-12 pr-6 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500/20 transition-all outline-none w-64' />
+              </div>
+              <button className='p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-colors'>
+                <Filter size={18} />
+              </button>
+           </div>
+         </div>
+         
+         <div className='overflow-x-auto'>
+            <table className='w-full text-left border-collapse'>
+               <thead>
+                  <tr className='bg-slate-50/50'>
+                     <th className='px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Student Details</th>
+                     <th className='px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest'>VUID</th>
+                     <th className='px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Course/Branch</th>
+                     <th className='px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Date</th>
+                     <th className='px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest'>Created By</th>
+                     <th className='px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center'>Action</th>
+                  </tr>
+               </thead>
+               <tbody className='divide-y divide-slate-50'>
+                  {admissions.length > 0 ? (
+                    admissions.map((student) => (
+                      <tr key={student.vuid} className='hover:bg-slate-50/50 transition-colors group'>
+                        <td className='px-10 py-6'>
+                           <div className='flex items-center gap-4'>
+                              <div className='w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-base shadow-sm group-hover:scale-110 transition-transform'>
+                                {student.name.charAt(0)}
                               </div>
-                           </td>
-                        </tr>
-                      )}
-                   </tbody>
-                </table>
-             </div>
-          </div>
-        </div>
-
-        <div className='space-y-6'>
-          <div className='bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden'>
-            <div className='absolute top-[-20%] right-[-20%] w-48 h-48 bg-blue-600/20 rounded-full blur-3xl'></div>
-            <h3 className='text-xl font-black tracking-tight mb-2'>Data Sync Status</h3>
-            <p className='text-slate-400 text-xs font-bold mb-6'>Master DB synchronized @ just now</p>
-            <div className='flex items-center gap-2 mb-8'>
-               {[1,2,3,4,5,6,7,8,9,10].map(i => (
-                 <div key={i} className='h-8 flex-1 bg-emerald-500/20 rounded-sm border-b-2 border-emerald-500'></div>
-               ))}
-            </div>
-            <button className='w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[11px] font-black uppercase tracking-widest transition-colors'>Force Database Re-index</button>
-          </div>
-
-          <div className='bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm'>
-             <div className='flex items-center justify-between mb-6'>
-                <h3 className='text-lg font-black text-slate-900 tracking-tight'>Quick Access</h3>
-             </div>
-             <div className='space-y-4'>
-                <button className='w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-indigo-50 rounded-2xl transition-all group'>
-                   <div className='flex items-center gap-3'>
-                      <div className='w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors shadow-sm'>
-                        <Search size={18} />
-                      </div>
-                      <span className='text-xs font-bold text-slate-700'>Student Search</span>
-                   </div>
-                   <ChevronRight size={14} className='text-slate-300' />
-                </button>
-                <button className='w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-indigo-50 rounded-2xl transition-all group'>
-                   <div className='flex items-center gap-3'>
-                      <div className='w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors shadow-sm'>
-                        <Save size={18} />
-                      </div>
-                      <span className='text-xs font-bold text-slate-700'>Draft Admissions</span>
-                   </div>
-                   <ChevronRight size={14} className='text-slate-300' />
-                </button>
-             </div>
-          </div>
-        </div>
+                              <div>
+                                 <p className='text-sm font-black text-slate-900'>{student.name}</p>
+                                 <p className='text-[10px] text-slate-400 font-bold'>{student.studentemailid}</p>
+                              </div>
+                           </div>
+                        </td>
+                        <td className='px-10 py-6'>
+                           <span className='px-4 py-1.5 bg-white border-2 border-indigo-50 text-indigo-600 rounded-xl text-[11px] font-black font-mono shadow-sm'>
+                             {student.vuid}
+                           </span>
+                        </td>
+                        <td className='px-10 py-6'>
+                           <p className='text-xs font-black text-slate-700'>{student.coursecode}</p>
+                           <p className='text-[10px] text-slate-400 font-bold uppercase tracking-widest'>{student.branchcode}</p>
+                        </td>
+                        <td className='px-10 py-6'>
+                           <p className='text-xs font-black text-slate-700'>{new Date(student.createdAt).toLocaleDateString()}</p>
+                           <p className='text-[10px] text-slate-400 font-bold'>{new Date(student.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </td>
+                        <td className='px-10 py-6'>
+                           <div className='flex items-center gap-2'>
+                             <div className='w-2 h-2 bg-emerald-500 rounded-full animate-pulse'></div>
+                             <div>
+                               <p className='text-xs font-black text-slate-700 capitalize'>{student.createdBy}</p>
+                               <p className='text-[10px] text-slate-400 font-bold uppercase tracking-widest'>Authorized</p>
+                             </div>
+                           </div>
+                        </td>
+                        <td className='px-10 py-6 text-center'>
+                           <button className='p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all active:scale-90'>
+                             <ExternalLink size={18} />
+                           </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                       <td colSpan="6" className='px-10 py-20 text-center'>
+                          <div className='flex flex-col items-center gap-4 grayscale opacity-20'>
+                            <Users size={64} />
+                            <p className='text-base font-black text-slate-500 tracking-tight'>No admissions recorded yet.</p>
+                          </div>
+                       </td>
+                    </tr>
+                  )}
+               </tbody>
+            </table>
+         </div>
       </div>
     </div>
   );
